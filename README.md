@@ -5,6 +5,7 @@
 
 ```
 $ python m3u8_downloader.py http://your_m3u8_url.m3u8 /path_to_your_local_dir
+$ python3 m3u8_downloader_for_python3.py http://your_m3u8_url.m3u8 /path_to_your_local_dir
 ```
 
 <h2>Donate</h2>
