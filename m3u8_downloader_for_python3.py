@@ -1,7 +1,6 @@
 import os
 import sys
 import requests
-from urllib.parse import urlparse
 
 def get_cfg():
     argv = sys.argv
@@ -11,18 +10,16 @@ def get_cfg():
         return None
     return (argv[1], argv[2])
 
-def get_host(url):
-	urlgroup = urlparse(url)
-	return urlgroup.scheme + '://' + urlgroup.hostname
-
 def get_m3u8_body(url):
-	print('read m3u8 file:', url)
-	session = requests.Session()
-	adapter = requests.adapters.HTTPAdapter(pool_connections=10, pool_maxsize=10, max_retries=10)
-	session.mount('http://', adapter)
-	session.mount('https://', adapter)
-	r = session.get(url, timeout=10)
-	return r.text
+    print('read m3u8 file:', url)
+    with requests.Session() as session:
+        adapter = requests.adapters.HTTPAdapter(
+            pool_connections=10, pool_maxsize=10, max_retries=10
+        )
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        r = session.get(url, timeout=10)
+    return r.text
 
 def get_url_list(host, body):
 	lines = body.split('\n')
@@ -78,7 +75,7 @@ def get_download_url_list(host, m3u8_url, url_list = []):
 
 def download_ts(m3u8_url, save_dir):
 	check_dir(save_dir)
-	host = get_host(m3u8_url)
+	host = m3u8_url[: m3u8_url.rindex("/")]
 	ts_url_list = get_download_url_list(host, m3u8_url)
 	print(ts_url_list)
 	print('total file count:', len(ts_url_list))
